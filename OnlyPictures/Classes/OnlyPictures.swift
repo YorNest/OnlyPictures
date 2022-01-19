@@ -647,7 +647,7 @@ extension OnlyPictures {
 
         }else{
             self.buttonCount?.titleLabel?.font = self.fontForCount
-            let countForCountCircle = "+\(count)"
+            let countForCountCircle = " +\(count)"
             self.buttonCount?.setTitle(countForCountCircle, for: .normal)
             let width = countForCountCircle.width(withConstrainedHeight: SIZE_OF_IMAGEVIEWS, font: self.fontForCount)
             self.calculatedWidthOfCount = (width+24)>SIZE_OF_IMAGEVIEWS ? (width+24) : SIZE_OF_IMAGEVIEWS
