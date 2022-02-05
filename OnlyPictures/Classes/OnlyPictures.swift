@@ -13,6 +13,7 @@ private var IMAGEVIEW_BORDERWIDTH = 2.0
 private var SIZE_OF_IMAGEVIEWS: CGFloat = 0.0
 
 @objc public protocol OnlyPicturesDataSource {
+    func countAllImages(onlyPictureView: OnlyPictures) -> Int
     func numberOfPictures(onlyPictureView: OnlyPictures) -> Int
     @objc optional func visiblePictures(onlyPictureView: OnlyPictures) -> Int
     @objc optional func pictureViews(onlyPictureView: OnlyPictures, index: Int) -> UIImage
@@ -103,6 +104,7 @@ public class OnlyPictures: UIView {
     
     
     // Count -----------------------------------------------------------
+    internal var allPicturesCount: Int = 0
     internal var picturesCount: Int = 0
     internal var visiblePictures: Int = 0
     
@@ -156,7 +158,11 @@ public class OnlyPictures: UIView {
         guard let picturesCount: Int = self.dataSource?.numberOfPictures(onlyPictureView: self), picturesCount != 0 else{
             return
         }
+        guard let allPicturesCount: Int = self.dataSource?.countAllImages(onlyPictureView: self), picturesCount != 0 else {
+            return
+        }
         self.picturesCount = picturesCount  // assign new pictures count to pictureCount
+        self.allPicturesCount = allPicturesCount
         
         // If listPictureImageViews are blank, it indicates OnlyPictures loading first time.
         if self.listPictureImageViews.count == 0 {
@@ -223,7 +229,7 @@ public class OnlyPictures: UIView {
                 }
                 
                 
-                self.setCountRuntimeFlexibility(count: self.picturesCount-self.visiblePictures) // Set updated count
+                self.setCountRuntimeFlexibility(count: self.allPicturesCount-self.visiblePictures) // Set updated count
                 self.removeAdditionalImageViewsInsideStackView(indexStopped: indexStopeedAt+1)  // Remove additional imageViews from self.stackviewOfImageViews
                 
                 // Reset layout
@@ -596,7 +602,7 @@ extension OnlyPictures {
     fileprivate func setCountTheme(font: UIFont, textColor: UIColor) {
         
         if self.isVisibleCountExists() {
-            self.setCountRuntimeFlexibility(count: self.picturesCount-self.visiblePictures)
+            self.setCountRuntimeFlexibility(count: self.allPicturesCount-self.visiblePictures)
         }
     }
     func setCountRuntimeFlexibility(count: Int) {
@@ -647,7 +653,7 @@ extension OnlyPictures {
 
         }else{
             self.buttonCount?.titleLabel?.font = self.fontForCount
-            let countForCountCircle = " +\(count)"
+            let countForCountCircle = "+\(count)"
             self.buttonCount?.setTitle(countForCountCircle, for: .normal)
             let width = countForCountCircle.width(withConstrainedHeight: SIZE_OF_IMAGEVIEWS, font: self.fontForCount)
             self.calculatedWidthOfCount = (width+24)>SIZE_OF_IMAGEVIEWS ? (width+24) : SIZE_OF_IMAGEVIEWS
